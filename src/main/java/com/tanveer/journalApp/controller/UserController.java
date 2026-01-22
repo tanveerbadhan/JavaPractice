@@ -2,14 +2,12 @@ package com.tanveer.journalApp.controller;
 
 import com.tanveer.journalApp.entity.User;
 import com.tanveer.journalApp.service.UserService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -49,12 +47,9 @@ public class UserController {
     @PutMapping("/{userName}")
     public ResponseEntity<User> updateUserById(@RequestBody User user, @PathVariable String userName){
         try {
-            User userInDb = userService.findByUserName(userName);
-            if(userInDb != null){
-                userInDb.setUserName(user.getUserName() != null && !user.getUserName().equals("") ? user.getUserName() : userInDb.getUserName());
-                userInDb.setPassword(user.getPassword() != null && !user.getPassword().equals("") ? user.getPassword() : userInDb.getPassword());
-                userService.saveEntry(userInDb);
-                return new ResponseEntity<>(user, HttpStatus.CREATED);
+            User updatedUser = userService.updateUserByUserName(userName, user);
+            if(updatedUser != null){
+                return new ResponseEntity<>(HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {

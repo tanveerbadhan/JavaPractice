@@ -59,13 +59,9 @@ public class JournalEntryController {
     @PostMapping("/{userName}")
     public ResponseEntity<JournalEntry> createEntry(@RequestBody JournalEntry myEntry, @PathVariable String userName){
         try {
-            User user = userService.findByUserName(userName);
-            if(user != null){
-                List<JournalEntry> userJournalList = user.getJournalEntryList();
-                journalEntryService.saveEntry(myEntry);
-                userJournalList.add(myEntry);
-                userService.saveEntry(user);
-                return new ResponseEntity<>(HttpStatus.CREATED);
+            JournalEntry journalEntry = journalEntryService.saveEntryByUserName(myEntry, userName);
+            if(journalEntry != null){
+                return new ResponseEntity<>(journalEntry, HttpStatus.CREATED);
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -77,13 +73,11 @@ public class JournalEntryController {
     @PutMapping("/id/{myId}")
     public ResponseEntity<JournalEntry> updateEntry(@PathVariable ObjectId myId, @RequestBody JournalEntry updatedEntry){
         try {
-            JournalEntry oldEntry = journalEntryService.findById(myId).orElse(null);
-            if(oldEntry != null){
-                oldEntry.setTitle(updatedEntry.getTitle() != null && !updatedEntry.getTitle().equals("") ? updatedEntry.getTitle() : oldEntry.getTitle());
-                oldEntry.setContent(updatedEntry.getContent() != null && !updatedEntry.getContent().equals("") ? updatedEntry.getContent() : oldEntry.getContent());
+            JournalEntry journalEntry = journalEntryService.updateEntryById(myId, updatedEntry);
+            if(journalEntry != null){
+                return new ResponseEntity<>(journalEntry, HttpStatus.OK);
             }
-            journalEntryService.saveEntry(oldEntry);
-            return new ResponseEntity<>(oldEntry, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -93,12 +87,11 @@ public class JournalEntryController {
     @DeleteMapping("/id/{myId}/{userName}")
     public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myId, @PathVariable String userName){
         try {
-            userService.deleteJournalEntryByUserNameAndId(userName, myId);
+            journalEntryService.deleteJournalEntryByUserNameAndId(userName, myId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
     }
-
 }
