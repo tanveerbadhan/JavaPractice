@@ -3,7 +3,7 @@ package com.tanveer.journalApp.controller;
 import com.tanveer.journalApp.entity.User;
 import com.tanveer.journalApp.repository.UserRepository;
 import com.tanveer.journalApp.response.UsernameAndQuotesResponse;
-import com.tanveer.journalApp.service.QoutesService;
+import com.tanveer.journalApp.service.QuotesService;
 import com.tanveer.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -23,7 +21,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private QoutesService qoutesService;
+    private QuotesService qoutesService;
 
     @GetMapping
     public ResponseEntity<User> getUserByUserName(){
@@ -41,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/qoutes")
-    public ResponseEntity<UsernameAndQuotesResponse> getUserNameAndQoute() {
+    public ResponseEntity<UsernameAndQuotesResponse> getUserNameAndQuote() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.findByUserName(username);
