@@ -2,6 +2,8 @@ package com.tanveer.journalApp.controller;
 
 import com.tanveer.journalApp.entity.User;
 import com.tanveer.journalApp.repository.UserRepository;
+import com.tanveer.journalApp.response.UsernameAndQuotesResponse;
+import com.tanveer.journalApp.service.QoutesService;
 import com.tanveer.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private QoutesService qoutesService;
 
     @GetMapping
     public ResponseEntity<User> getUserByUserName(){
@@ -32,6 +36,22 @@ public class UserController {
             }
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/qoutes")
+    public ResponseEntity<UsernameAndQuotesResponse> getUserNameAndQoute() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUserName(username);
+        UsernameAndQuotesResponse usernameAndQuotes = new UsernameAndQuotesResponse(username, qoutesService.getQuotes());
+        try {
+            if(user != null){
+                return new ResponseEntity<>(usernameAndQuotes, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }

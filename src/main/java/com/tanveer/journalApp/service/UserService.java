@@ -20,8 +20,6 @@ public class UserService {
     private UserRepository userRepository;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    @Autowired
-    private View error;
 
     public List<User> getAll(){
         return userRepository.findAll();

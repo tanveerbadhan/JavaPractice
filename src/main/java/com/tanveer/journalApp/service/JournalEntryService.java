@@ -4,7 +4,10 @@ import com.tanveer.journalApp.entity.JournalEntry;
 import com.tanveer.journalApp.entity.User;
 import com.tanveer.journalApp.repository.JournalEntryRepository;
 import com.tanveer.journalApp.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class JournalEntryService {
 
     @Autowired
@@ -35,6 +39,7 @@ public class JournalEntryService {
             journalEntryRepository.save(journalEntry);
             userJournalList.add(journalEntry);
             userRepository.save(user);
+            log.info("User is saved");
             return journalEntry;
         }
         return null;
